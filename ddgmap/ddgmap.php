@@ -1,9 +1,11 @@
 <?php
 /**
  * mm_ddGMap
- * @version 1.1 (2012-04-16)
+ * @version 1.1.1 (2012-11-13)
  * 
  * @desc Widget for ManagerManager plugin allowing Google Maps integration.
+ * 
+ * @uses ManagerManager plugin 0.4.
  * 
  * @param $tvs {comma separated string} - TV names to which the widget is applied. @required
  * @param $roles {comma separated string} - The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
@@ -12,7 +14,7 @@
  * @param $h {integer} - Height of the map container. Default: 400.
  * @param $hideField {0; 1} - Original coordinates field hiding status (1 — hide, 0 — show). Default: 1.
  * 
- * @link http://code.divandesign.biz/modx/mm_ddgmap/1.1
+ * @link http://code.divandesign.biz/modx/mm_ddgmap/1.1.1
  * 
  * @copyright 2012, DivanDesign
  * http://www.DivanDesign.biz
@@ -23,27 +25,21 @@ function mm_ddGMap($tvs, $roles = '', $templates = '', $w = 'auto', $h = '400', 
 	$e = &$modx->Event;
 	
 	if ($e->name == 'OnDocFormRender' && useThisRule($roles, $templates)){
-		
-		// Your output should be stored in a string, which is outputted at the end
-		// It will be inserted as a Javascript block (with jQuery), which is executed on document ready
 		$output = '';
 		
-		// if we've been supplied with a string, convert it into an array 
+		// if we've been supplied with a string, convert it into an array
 		$tvs = makeArray($tvs);
-		
-		// You might want to check whether the current page's template uses the TVs that have been
-		// supplied, to save processing page which don't contain them
 		
 		// Which template is this page using?
 		if (isset($content['template'])){
 			$page_template = $content['template'];
 		}else{
-			// If no content is set, it's likely we're adding a new page at top level. 
+			// If no content is set, it's likely we're adding a new page at top level.
 			// So use the site default template. This may need some work as it might interfere with a default template set by MM?
-			$page_template = $modx->config['default_template']; 
+			$page_template = $modx->config['default_template'];
 		}
 		
-		$tvs = tplUseTvs($content['template'], $tvs);
+		$tvs = tplUseTvs($page_template, $tvs);
 		if ($tvs == false){
 			return;
 		}
@@ -51,10 +47,6 @@ function mm_ddGMap($tvs, $roles = '', $templates = '', $w = 'auto', $h = '400', 
 		$style = 'width: '.$w.'px; height: '.$h.'px; position: relative; border: 1px solid #c3c3c3;';
 		// We always put a JS comment, which makes debugging much easier
 		$output .= "//  -------------- mm_ddGMap :: Begin ------------- \n";
-		
-		// We have functions to include JS or CSS external files you might need
-		// The standard ModX API methods don't work here
-		//$output .= includeJs('http://maps.google.com/maps/api/js?sensor=false');
 		
 		// Do something for each of the fields supplied
 		foreach ($tvs as $tv){
@@ -127,7 +119,7 @@ $j(window).on("load.ddEvents", function(){
 		}
 		$output .= "//  -------------- mm_ddGMap :: End ------------- \n";
 		
-		$e->output($output . "\n");	// Send the output to the browser
+		$e->output($output . "\n");
 	}
 }
 ?>
