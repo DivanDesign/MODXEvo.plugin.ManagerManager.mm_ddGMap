@@ -21,25 +21,13 @@
  */
 
 function mm_ddGMap($tvs, $roles = '', $templates = '', $w = 'auto', $h = '400', $hideField = true){
-	global $modx, $content, $mm_fields, $modx_lang_attribute;
+	global $modx, $mm_current_page, $mm_fields, $modx_lang_attribute;
 	$e = &$modx->Event;
 	
 	if ($e->name == 'OnDocFormRender' && useThisRule($roles, $templates)){
 		$output = '';
 		
-		// if we've been supplied with a string, convert it into an array
-		$tvs = makeArray($tvs);
-		
-		// Which template is this page using?
-		if (isset($content['template'])){
-			$page_template = $content['template'];
-		}else{
-			// If no content is set, it's likely we're adding a new page at top level.
-			// So use the site default template. This may need some work as it might interfere with a default template set by MM?
-			$page_template = $modx->config['default_template'];
-		}
-		
-		$tvs = tplUseTvs($page_template, $tvs);
+		$tvs = tplUseTvs($mm_current_page['template'], $tvs);
 		if ($tvs == false){
 			return;
 		}
