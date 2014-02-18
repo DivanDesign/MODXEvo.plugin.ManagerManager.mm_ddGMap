@@ -1,21 +1,24 @@
 <?php
 /**
  * mm_ddGMap
- * @version 1.0.2 (2012-02-12)
+ * @version 1.1 (2012-04-16)
  * 
  * @desc Widget for ManagerManager plugin allowing Google Maps integration.
  * 
- * @param $tvs {omma separated string} - TV names to which the widget is applied. @required
+ * @param $tvs {comma separated string} - TV names to which the widget is applied. @required
  * @param $roles {comma separated string} - The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
  * @param $templates {comma separated string} - Id of the templates to which this widget is applied (when this parameter is empty then widget is applied to the all templates). Default: ''.
  * @param $w {'auto'; integer} - Width of the map container. Default: 'auto'.
  * @param $h {integer} - Height of the map container. Default: 400.
+ * @param $hideField {0; 1} - Original coordinates field hiding status (1 — hide, 0 — show). Default: 1.
+ * 
+ * @link http://code.divandesign.biz/modx/mm_ddgmap/1.1
  * 
  * @copyright 2012, DivanDesign
  * http://www.DivanDesign.biz
  */
 
-function mm_ddGMap($tvs, $roles = '', $templates = '', $w = 'auto', $h = '400'){
+function mm_ddGMap($tvs, $roles = '', $templates = '', $w = 'auto', $h = '400', $hideField = true){
 	global $modx, $content, $mm_fields, $modx_lang_attribute;
 	$e = &$modx->Event;
 	
@@ -59,15 +62,29 @@ function mm_ddGMap($tvs, $roles = '', $templates = '', $w = 'auto', $h = '400'){
 			// This can be obtained from the mm_fields array
 			$tv_id = 'tv'.$tv['id'];
 			$output .= '
-var coordinatesField = $j("#'.$tv_id.'");//TV с координатами
-var ddLatLng = coordinatesField.val();//Координаты
-//Скрываем поле, запоминаем название поля
-var sectionName = coordinatesField.parents("tr:first").hide().find(".warning").text();
-coordinatesField.parents("tr:first").prev("tr").hide();
+//TV с координатами
+var coordFieldId = "'.$tv_id.'", $coordinatesField = $j("#" + coordFieldId);
+//Координаты
+var ddLatLng = $coordinatesField.val();
+
+//Родитель
+var $coordFieldParent = $coordinatesField.parents("tr:first");
+//Запоминаем название поля
+var sectionName = $coordFieldParent.find(".warning").text();
+
+//Скрываем родителя и разделитель
+$coordFieldParent.hide().prev("tr").hide();
+
 //Контейнер для карты
-var sectionConteiner = $j("<div class=\"sectionHeader\">"+sectionName+"</div><div class=\"sectionBody tmplvars\"><div class=\"ddGMap\" style=\"'.$style.'\"></div></div>");
+var $sectionConteiner = $j("<div class=\"sectionHeader\">" + sectionName + "</div><div class=\"sectionBody tmplvars\"><div class=\"ddGMap" + coordFieldId + "\" style=\"'.$style.'\"></div></div>");
 //Добавляем контейнер
-coordinatesField.parents(".tab-page:first").append(sectionConteiner);
+$coordinatesField.parents(".tab-page:first").append($sectionConteiner);
+
+//Если скрывать не надо, засовываем перед картой
+if (!'.intval($hideField).'){
+	$coordinatesField.insertBefore(".ddGMap" + coordFieldId);
+}
+
 //Если координаты не заданны, то задаём дефолт
 if(ddLatLng == "") ddLatLng = "55.19396010947335,61.3670539855957";
 ddLatLng = ddLatLng.split(",");
@@ -82,7 +99,7 @@ window.ddgminitialize = function(){
 		streetViewControl: false,
 		scrollwheel: false
 	};
-	var map = new GM.Map(sectionConteiner.find(".ddGMap").get(0), myOptions);
+	var map = new GM.Map($sectionConteiner.find(".ddGMap" + coordFieldId).get(0), myOptions);
 	//Добавляем маркер на карту
 	var GMMarker = new GM.Marker({
 		position: new GM.LatLng(ddLatLng[0],ddLatLng[1]),
@@ -92,14 +109,14 @@ window.ddgminitialize = function(){
 	//При перетаскивании маркера
 	GM.event.addListener(GMMarker, "drag", function(event){
 		var position = event.latLng;//Координаты
-		coordinatesField.val(position.lat() + "," + position.lng());//Сохраняем значение в поле
+		$coordinatesField.val(position.lat() + "," + position.lng());//Сохраняем значение в поле
 	});
 	//При клике на карте
 	GM.event.addListener(map, "click", function(event){
 		var position = event.latLng;//Новые координаты
 		GMMarker.setPosition(position);//Меняем позицию маркера
 		map.setCenter(position);//Центрируем карту на маркере
-		coordinatesField.val(position.lat() + "," + position.lng());//Сохраняем значение в поле
+		$coordinatesField.val(position.lat() + "," + position.lng());//Сохраняем значение в поле
 	});
 };
 //Подключаем карту, вызываем callback функцию
