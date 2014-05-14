@@ -1,11 +1,11 @@
 <?php
 /**
  * mm_ddGMap
- * @version 1.1.1 (2012-11-13)
+ * @version 1.2b (2014-05-14)
  * 
  * @desc Widget for ManagerManager plugin allowing Google Maps integration.
  * 
- * @uses ManagerManager plugin 0.4.
+ * @uses ManagerManager plugin 0.6.1.
  * 
  * @param $tvs {comma separated string} - TV names to which the widget is applied. @required
  * @param $roles {comma separated string} - The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
@@ -14,9 +14,9 @@
  * @param $h {integer} - Height of the map container. Default: 400.
  * @param $hideField {0; 1} - Original coordinates field hiding status (1 — hide, 0 — show). Default: 1.
  * 
- * @link http://code.divandesign.biz/modx/mm_ddgmap/1.1.1
+ * @link http://code.divandesign.biz/modx/mm_ddgmap/1.2b
  * 
- * @copyright 2012, DivanDesign
+ * @copyright 2014, DivanDesign
  * http://www.DivanDesign.biz
  */
 
