@@ -21,93 +21,49 @@
  */
 
 function mm_ddGMap($tvs, $roles = '', $templates = '', $w = 'auto', $h = '400', $hideField = true){
-	global $modx, $mm_current_page, $mm_fields, $modx_lang_attribute;
+	if (!useThisRule($roles, $templates)){return;}
+	
+	global $modx;
 	$e = &$modx->Event;
 	
-	if ($e->name == 'OnDocFormRender' && useThisRule($roles, $templates)){
+	if ($e->name == 'OnDocFormPrerender'){
+		global $modx_lang_attribute;
+		
+		//The main js file including
+		$output = includeJsCss($modx->config['site_url'].'assets/plugins/managermanager/widgets/ddgmap/jquery.ddMM.mm_ddGMap.js', 'html', 'jquery.ddMM.mm_ddGMap', '1.0');
+		//The Google.Maps library including
+		$output .= includeJsCss('http://maps.google.com/maps/api/js?sensor=false&hl='.$modx_lang_attribute.'&callback=mm_ddGMap_init', 'html', 'maps.google.com', '0');
+		
+		$e->output($output);
+	}else if ($e->name == 'OnDocFormRender'){
+		global $mm_current_page;
+		
 		$output = '';
+		$tvs = makeArray($tvs);
 		
-		$tvs = tplUseTvs($mm_current_page['template'], $tvs);
-		if ($tvs == false){
-			return;
-		}
+		$usedTvs = tplUseTvs($mm_current_page['template'], $tvs, '', 'id', 'name');
+		if ($usedTvs == false){return;}
 		
-		$style = 'width: '.$w.'px; height: '.$h.'px; position: relative; border: 1px solid #c3c3c3;';
-		// We always put a JS comment, which makes debugging much easier
-		$output .= "//  -------------- mm_ddGMap :: Begin ------------- \n";
+		$output .= "//---------- mm_ddGMap :: Begin -----\n";
 		
-		// Do something for each of the fields supplied
+		//Iterate over supplied TVs instead of doing so to the result of tplUseTvs() to maintain rendering order.
 		foreach ($tvs as $tv){
-			// If it's a TV, we may need to map the field name, to what it's ID is.
-			// This can be obtained from the mm_fields array
-			$tv_id = 'tv'.$tv['id'];
-			$output .= '
-//TV с координатами
-var coordFieldId = "'.$tv_id.'", $coordinatesField = $j("#" + coordFieldId);
-//Координаты
-var ddLatLng = $coordinatesField.val();
-
-//Родитель
-var $coordFieldParent = $coordinatesField.parents("tr:first");
-//Запоминаем название поля
-var sectionName = $coordFieldParent.find(".warning").text();
-
-//Скрываем родителя и разделитель
-$coordFieldParent.hide().prev("tr").hide();
-
-//Контейнер для карты
-var $sectionConteiner = $j("<div class=\"sectionHeader\">" + sectionName + "</div><div class=\"sectionBody tmplvars\"><div class=\"ddGMap" + coordFieldId + "\" style=\"'.$style.'\"></div></div>");
-//Добавляем контейнер
-$coordinatesField.parents(".tab-page:first").append($sectionConteiner);
-
-//Если скрывать не надо, засовываем перед картой
-if (!'.intval($hideField).'){
-	$coordinatesField.insertBefore(".ddGMap" + coordFieldId);
-}
-
-//Если координаты не заданны, то задаём дефолт
-if(ddLatLng == "") ddLatLng = "55.19396010947335,61.3670539855957";
-ddLatLng = ddLatLng.split(",");
-
-//Callback функция для GM
-window.ddgminitialize = function(){
-	var GM = google.maps;
-	var myOptions = {
-		zoom: 15,
-		center: new GM.LatLng(ddLatLng[0],ddLatLng[1]),
-		mapTypeId: GM.MapTypeId.ROADMAP,
-		streetViewControl: false,
-		scrollwheel: false
-	};
-	var map = new GM.Map($sectionConteiner.find(".ddGMap" + coordFieldId).get(0), myOptions);
-	//Добавляем маркер на карту
-	var GMMarker = new GM.Marker({
-		position: new GM.LatLng(ddLatLng[0],ddLatLng[1]),
-		map: map,
-		draggable: true
-	});
-	//При перетаскивании маркера
-	GM.event.addListener(GMMarker, "drag", function(event){
-		var position = event.latLng;//Координаты
-		$coordinatesField.val(position.lat() + "," + position.lng());//Сохраняем значение в поле
-	});
-	//При клике на карте
-	GM.event.addListener(map, "click", function(event){
-		var position = event.latLng;//Новые координаты
-		GMMarker.setPosition(position);//Меняем позицию маркера
-		map.setCenter(position);//Центрируем карту на маркере
-		$coordinatesField.val(position.lat() + "," + position.lng());//Сохраняем значение в поле
-	});
-};
-//Подключаем карту, вызываем callback функцию
-$j(window).on("load.ddEvents", function(){
-	$j("body").append("<script type=\"text/javascript\" src=\"http://maps.google.com/maps/api/js?sensor=false&hl='.$modx_lang_attribute.'&callback=ddgminitialize\">");
+			//If this $tv is used in a current template
+			if (isset($usedTvs[$tv])){
+				$output .= 
+'
+$j("#tv'.$usedTvs[$tv]['id'].'").mm_ddGMap({
+	hideField: '.intval($hideField).',
+	width: "'.$w.'",
+	height: "'.$h.'"
 });
 ';
+			}
 		}
-		$output .= "//  -------------- mm_ddGMap :: End ------------- \n";
 		
-		$e->output($output . "\n");
+		$output .= "//---------- mm_ddGMap :: End -----\n";
+		
+		$e->output($output);
 	}
 }
 ?>
