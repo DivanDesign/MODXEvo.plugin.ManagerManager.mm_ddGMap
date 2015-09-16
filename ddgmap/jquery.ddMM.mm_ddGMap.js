@@ -62,7 +62,7 @@ $.ddMM.mm_ddGMap = {
 
 /**
  * jQuery.fn.mm_ddGMap Plugin
- * @version 1.0 (2014-05-14)
+ * @version 1.0.1 (2015-09-16)
  * 
  * @desc Делает карту.
  * 
@@ -73,7 +73,7 @@ $.ddMM.mm_ddGMap = {
  * @param width {integer; 'auto'} - Ширина контейнера с картой. Default: 'auto'.
  * @param height {integer} - Высота контейнера с картой. Default: 400.
  * 
- * @copyright 2014, DivanDesign
+ * @copyright 2015, DivanDesign
  * http://www.DivanDesign.biz
  */
 $.fn.mm_ddGMap = function(params){
@@ -119,7 +119,7 @@ $.fn.mm_ddGMap = function(params){
 		
 		//Если координаты не заданны, то задаём дефолт
 		if ($.trim(elem.position) == ''){
-			elem.position = '55.17725339420589,61.29035648102616';
+			elem.position = '55.20432131317031,61.28999948501182';
 		}
 		
 		//Разбиваем координаты
