@@ -31,7 +31,7 @@ function mm_ddGMap($tvs, $roles = '', $templates = '', $w = 'auto', $h = '400', 
 		global $modx_lang_attribute;
 		
 		//The main js file including
-		$output = includeJsCss($modx->config['site_url'].'assets/plugins/managermanager/widgets/ddgmap/jquery.ddMM.mm_ddGMap.js', 'html', 'jquery.ddMM.mm_ddGMap', '1.1');
+		$output = includeJsCss($modx->config['site_url'].'assets/plugins/managermanager/widgets/ddgmap/jQuery.ddMM.mm_ddGMap.js', 'html', 'jQuery.ddMM.mm_ddGMap', '1.1');
 		//The Google.Maps library including
 		$output .= includeJsCss('http://maps.google.com/maps/api/js?sensor=false&hl='.$modx_lang_attribute.'&key='.$APIkey.'&callback=mm_ddGMap_init', 'html', 'maps.google.com', '0');
 		
