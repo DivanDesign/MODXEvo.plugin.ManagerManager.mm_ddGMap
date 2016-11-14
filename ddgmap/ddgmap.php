@@ -5,23 +5,30 @@
  * 
  * @desc Widget for ManagerManager plugin allowing Google Maps integration.
  * 
- * @uses ManagerManager plugin 0.6.1.
+ * @uses MODXEvo.plugin.ManagerManager >= 0.6.1.
  * 
- * @param $tvs {comma separated string} - TV names to which the widget is applied. @required
- * @param $roles {comma separated string} - The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
- * @param $templates {comma separated string} - Id of the templates to which this widget is applied (when this parameter is empty then widget is applied to the all templates). Default: ''.
- * @param $w {'auto'; integer} - Width of the map container. Default: 'auto'.
- * @param $h {integer} - Height of the map container. Default: 400.
- * @param $hideField {0; 1} - Original coordinates field hiding status (1 — hide, 0 — show). Default: 1.
- * @param $APIkey {string} - Google Maps API key. @required
+ * @param $tvs {string_commaSeparated} — TV names to which the widget is applied. @required
+ * @param $roles {string_commaSeparated} — The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
+ * @param $templates {string_commaSeparated} — Id of the templates to which this widget is applied (when this parameter is empty then widget is applied to the all templates). Default: ''.
+ * @param $w {'auto'|integer} — Width of the map container. Default: 'auto'.
+ * @param $h {integer} — Height of the map container. Default: 400.
+ * @param $hideField {0|1} — Original coordinates field hiding status (1 — hide, 0 — show). Default: 1.
+ * @param $APIkey {string} — Google Maps API key. @required
  * 
  * @link http://code.divandesign.biz/modx/mm_ddgmap/1.2b
  * 
- * @copyright 2014, DivanDesign
- * http://www.DivanDesign.biz
+ * @copyright 2012–2016 DivanDesign {@link http://www.DivanDesign.biz }
  */
 
-function mm_ddGMap($tvs, $roles = '', $templates = '', $w = 'auto', $h = '400', $hideField = true, $APIkey = ''){
+function mm_ddGMap(
+	$tvs,
+	$roles = '',
+	$templates = '',
+	$w = 'auto',
+	$h = '400',
+	$hideField = true,
+	$APIkey = ''
+){
 	if (!useThisRule($roles, $templates)){return;}
 	
 	global $modx;
@@ -45,7 +52,7 @@ function mm_ddGMap($tvs, $roles = '', $templates = '', $w = 'auto', $h = '400', 
 		$usedTvs = tplUseTvs($mm_current_page['template'], $tvs, '', 'id', 'name');
 		if ($usedTvs == false){return;}
 		
-		$output .= "//---------- mm_ddGMap :: Begin -----\n";
+		$output .= '//---------- mm_ddGMap :: Begin -----'.PHP_EOL;
 		
 		//Iterate over supplied TVs instead of doing so to the result of tplUseTvs() to maintain rendering order.
 		foreach ($tvs as $tv){
@@ -62,7 +69,7 @@ $j("#tv'.$usedTvs[$tv]['id'].'").mm_ddGMap({
 			}
 		}
 		
-		$output .= "//---------- mm_ddGMap :: End -----\n";
+		$output .= '//---------- mm_ddGMap :: End -----'.PHP_EOL;
 		
 		$e->output($output);
 	}
