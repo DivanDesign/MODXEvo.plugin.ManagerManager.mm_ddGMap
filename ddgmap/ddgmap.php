@@ -14,6 +14,7 @@
  * @param $params['mapWidth'] {'auto'|integer} — Width of the map container. Default: 'auto'.
  * @param $params['mapHeight'] {integer} — Height of the map container. Default: 400.
  * @param $params['hideOriginalInput'] {boolean} — Original coordinates field hiding status (1 — hide, 0 — show). Default: 1.
+ * @param $params['defaultZoom'] {integer} — Map default zoom. Default: 15.
  * @param $params['roles'] {string_commaSeparated} — The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
  * @param $params['templates'] {string_commaSeparated} — Id of the templates to which this widget is applied (when this parameter is empty then widget is applied to the all templates). Default: ''.
  * 
@@ -50,6 +51,7 @@ function mm_ddGMap($params){
 		'mapWidth' => 'auto',
 		'mapHeight' => 400,
 		'hideOriginalInput' => true,
+		'defaultZoom' => 15,
 		'roles' => '',
 		'templates' => ''
 	], (array) $params);
@@ -63,7 +65,7 @@ function mm_ddGMap($params){
 		global $modx_lang_attribute;
 		
 		//The main js file including
-		$output = includeJsCss($modx->config['site_url'].'assets/plugins/managermanager/widgets/ddgmap/jQuery.ddMM.mm_ddGMap.js', 'html', 'jQuery.ddMM.mm_ddGMap', '1.1');
+		$output = includeJsCss($modx->config['site_url'].'assets/plugins/managermanager/widgets/ddgmap/jQuery.ddMM.mm_ddGMap.js', 'html', 'jQuery.ddMM.mm_ddGMap', '1.1.1');
 		//The Google.Maps library including
 		$output .= includeJsCss('http://maps.google.com/maps/api/js?sensor=false&hl='.$modx_lang_attribute.'&key='.$params->APIkey.'&callback=mm_ddGMap_init', 'html', 'maps.google.com', '0');
 		
@@ -84,7 +86,8 @@ function mm_ddGMap($params){
 $j.ddMM.fields.'.$field.'.$elem.mm_ddGMap({
 	hideField: '.intval($params->hideOriginalInput).',
 	width: "'.$params->mapWidth.'",
-	height: "'.$params->mapHeight.'"
+	height: "'.$params->mapHeight.'",
+	defaultZoom: '.intval($params->defaultZoom).'
 });
 ';
 		}

@@ -1,6 +1,6 @@
 /**
  * jQuery.ddMM.mm_ddGMap
- * @version 1.1 (2016-11-15)
+ * @version 1.1.1 (2016-11-15)
  * 
  * @uses jQuery 1.9.1
  * @uses $.ddMM 1.1.2
@@ -17,7 +17,9 @@ $.ddMM.mm_ddGMap = {
 		//Ширина контейнера с картой
 		width: 'auto',
 		//Высота контейнера с картой
-		height: 400
+		height: 400,
+		//Default map zoom
+		defaultZoom: 15
 	},
 	//Массив id всех TV
 	tvs: new Array(),
@@ -26,7 +28,7 @@ $.ddMM.mm_ddGMap = {
 	
 	/**
 	 * @method init
-	 * @version 1.1 (2016-11-15)
+	 * @version 1.2 (2016-11-15)
 	 * 
 	 * @desc Инициализация карты.
 	 * 
@@ -38,6 +40,7 @@ $.ddMM.mm_ddGMap = {
 	 * @param elem.$elem {jQuery} — Map element.
 	 * @param elem.$searchInput {jQuery} — Search input element.
 	 * @param elem.$searchSubmit {jQuery} — Searhc submit element.
+	 * @param [elem.defaultZoom=$.ddMM.mm_ddGMap.defaults.defaultZoom] {integer} — Default map zoom.
 	 * 
 	 * @returns {void}
 	 */
@@ -45,7 +48,7 @@ $.ddMM.mm_ddGMap = {
 		var GM = google.maps,
 			//Карта
 			map = new GM.Map($('#ddGMap' + elem.id).get(0), {
-				zoom: 15,
+				zoom: elem.defaultZoom,
 				center: new GM.LatLng(elem.position[0], elem.position[1]),
 				mapTypeId: GM.MapTypeId.ROADMAP,
 				streetViewControl: false,
@@ -104,7 +107,7 @@ $.ddMM.mm_ddGMap = {
 
 /**
  * jQuery.fn.mm_ddGMap Plugin
- * @version 1.1 (2016-11-15)
+ * @version 1.2 (2016-11-15)
  * 
  * @desc Делает карту.
  * 
@@ -114,6 +117,7 @@ $.ddMM.mm_ddGMap = {
  * @param [params.hideField=true] {boolean} — Нужно ли скрывать оригинальное поле.
  * @param [params.width='auto'] {integer|'auto'} — Ширина контейнера с картой.
  * @param [params.height=400] {integer} — Высота контейнера с картой.
+ * @param [params.defaultZoom=15] {integer} — Default map zoom.
  * 
  * @copyright 2014–2016 [DivanDesign]{@link http://www.DivanDesign.biz }
  */
@@ -138,6 +142,8 @@ $.fn.mm_ddGMap = function(params){
 		elem.id = elem.$elem.attr('id');
 		//Координаты
 		elem.position = elem.$elem.val();
+		//Default map zoom
+		elem.defaultZoom = params.defaultZoom;
 		
 		//Родитель
 		var	$elemParent = elem.$elem.parents('tr:first'),
