@@ -72,26 +72,21 @@ function mm_ddGMap($params){
 		global $mm_current_page;
 		
 		$output = '';
-		$params->fields = makeArray($params->fields);
 		
-		$usedTvs = tplUseTvs($mm_current_page['template'], $params->fields, '', 'id', 'name');
-		if ($usedTvs == false){return;}
+		$params->fields = getTplMatchedFields($params->fields);
+		if ($params->fields == false){return;}
 		
 		$output .= '//---------- mm_ddGMap :: Begin -----'.PHP_EOL;
 		
-		//Iterate over supplied TVs instead of doing so to the result of tplUseTvs() to maintain rendering order.
 		foreach ($params->fields as $field){
-			//If this $field is used in a current template
-			if (isset($usedTvs[$field])){
-				$output .= 
+			$output .= 
 '
-$j("#tv'.$usedTvs[$field]['id'].'").mm_ddGMap({
+$j.ddMM.fields.'.$field.'.$elem.mm_ddGMap({
 	hideField: '.intval($params->hideOriginalInput).',
 	width: "'.$params->mapWidth.'",
 	height: "'.$params->mapHeight.'"
 });
 ';
-			}
 		}
 		
 		$output .= '//---------- mm_ddGMap :: End -----'.PHP_EOL;
