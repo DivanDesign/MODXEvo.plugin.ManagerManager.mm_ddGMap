@@ -7,12 +7,12 @@
  * 
  * @uses MODXEvo.plugin.ManagerManager >= 0.6.1.
  * 
- * @param $tvs {string_commaSeparated} — TV names to which the widget is applied. @required
+ * @param $fields {string_commaSeparated} — TV names to which the widget is applied. @required
  * @param $roles {string_commaSeparated} — The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
  * @param $templates {string_commaSeparated} — Id of the templates to which this widget is applied (when this parameter is empty then widget is applied to the all templates). Default: ''.
- * @param $w {'auto'|integer} — Width of the map container. Default: 'auto'.
- * @param $h {integer} — Height of the map container. Default: 400.
- * @param $hideField {0|1} — Original coordinates field hiding status (1 — hide, 0 — show). Default: 1.
+ * @param $mapWidth {'auto'|integer} — Width of the map container. Default: 'auto'.
+ * @param $mapHeight {integer} — Height of the map container. Default: 400.
+ * @param $hideOriginalInput {boolean} — Original coordinates field hiding status (1 — hide, 0 — show). Default: 1.
  * @param $APIkey {string} — Google Maps API key. @required
  * 
  * @link http://code.divandesign.biz/modx/mm_ddgmap/1.2b
@@ -21,12 +21,12 @@
  */
 
 function mm_ddGMap(
-	$tvs,
+	$fields,
 	$roles = '',
 	$templates = '',
-	$w = 'auto',
-	$h = '400',
-	$hideField = true,
+	$mapWidth = 'auto',
+	$mapHeight = '400',
+	$hideOriginalInput = true,
 	$APIkey = ''
 ){
 	if (!useThisRule($roles, $templates)){return;}
@@ -47,23 +47,23 @@ function mm_ddGMap(
 		global $mm_current_page;
 		
 		$output = '';
-		$tvs = makeArray($tvs);
+		$fields = makeArray($fields);
 		
-		$usedTvs = tplUseTvs($mm_current_page['template'], $tvs, '', 'id', 'name');
+		$usedTvs = tplUseTvs($mm_current_page['template'], $fields, '', 'id', 'name');
 		if ($usedTvs == false){return;}
 		
 		$output .= '//---------- mm_ddGMap :: Begin -----'.PHP_EOL;
 		
 		//Iterate over supplied TVs instead of doing so to the result of tplUseTvs() to maintain rendering order.
-		foreach ($tvs as $tv){
-			//If this $tv is used in a current template
-			if (isset($usedTvs[$tv])){
+		foreach ($fields as $field){
+			//If this $field is used in a current template
+			if (isset($usedTvs[$field])){
 				$output .= 
 '
-$j("#tv'.$usedTvs[$tv]['id'].'").mm_ddGMap({
-	hideField: '.intval($hideField).',
-	width: "'.$w.'",
-	height: "'.$h.'"
+$j("#tv'.$usedTvs[$field]['id'].'").mm_ddGMap({
+	hideField: '.intval($hideOriginalInput).',
+	width: "'.$mapWidth.'",
+	height: "'.$mapHeight.'"
 });
 ';
 			}
