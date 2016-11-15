@@ -1,7 +1,7 @@
 <?php
 /**
  * mm_ddGMap
- * @version 1.2b (2014-05-14)
+ * @version 1.3 (2016-11-15)
  * 
  * @desc Widget for ManagerManager plugin allowing Google Maps integration.
  * 
@@ -18,7 +18,7 @@
  * @param $params['roles'] {string_commaSeparated} — The roles that the widget is applied to (when this parameter is empty then widget is applied to the all roles). Default: ''.
  * @param $params['templates'] {string_commaSeparated} — Id of the templates to which this widget is applied (when this parameter is empty then widget is applied to the all templates). Default: ''.
  * 
- * @link http://code.divandesign.biz/modx/mm_ddgmap/1.2b
+ * @link http://code.divandesign.biz/modx/mm_ddgmap/1.3
  * 
  * @copyright 2012–2016 DivanDesign {@link http://www.DivanDesign.biz }
  */
@@ -73,12 +73,10 @@ function mm_ddGMap($params){
 	}else if ($e->name == 'OnDocFormRender'){
 		global $mm_current_page;
 		
-		$output = '';
-		
 		$params->fields = getTplMatchedFields($params->fields);
 		if ($params->fields == false){return;}
 		
-		$output .= '//---------- mm_ddGMap :: Begin -----'.PHP_EOL;
+		$output = '//---------- mm_ddGMap :: Begin -----'.PHP_EOL;
 		
 		foreach ($params->fields as $field){
 			$output .= 
